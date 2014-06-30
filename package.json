@@ -1,0 +1,24 @@
+{
+  "name": "seneca-transport-test",
+  "version": "0.1.0",
+  "description": "Standard test cases for Seneca transports.",
+  "main": "transport-test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rjrodger/seneca-transport-test.git"
+  },
+  "keywords": [
+    "seneca",
+    "transport",
+    "test"
+  ],
+  "author": "Richard Rodger (http://richardrodger.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rjrodger/seneca-transport-test/issues"
+  },
+  "homepage": "https://github.com/rjrodger/seneca-transport-test"
+}
