@@ -17,6 +17,8 @@ function foo_plugin() {
   this.add( 'foo:4', function(args,done){done(null,{dee:'4-'+args.bar})} )
   this.add( 'foo:5', function(args,done){done(null,{dee:'5-'+args.bar})} )
 
+  this.add( 'nores:1', function(args,done){done()} )
+
   this.add( 'faf:1', function(args,done){fafmap[args.k]=args.v;done()} )
 
   this.add( 'role:a,cmd:1', function(args,done){this.good({out:'a1-'+args.bar})} )
@@ -42,29 +44,32 @@ function foo_run( seneca, done, type, port ) {
     .client({type:type,port:pn})
     .ready( function() {
 
-      this.act('foo:1,bar:A',function(err,out){
+      ;this.act('foo:1,bar:A',function(err,out){
         if(err) return done(err);
-              
         assert.equal( '{"dee":"1-A"}', JSON.stringify(out) )
 
-        this.act('foo:1,bar:AA',function(err,out){
-          if(err) return done(err);
-              
-          assert.equal( '{"dee":"1-AA"}', JSON.stringify(out) )
+      ;this.act('foo:1,bar:AA',function(err,out){
+        if(err) return done(err);
+        assert.equal( '{"dee":"1-AA"}', JSON.stringify(out) )
 
-          // test fire-and-forget
-          var k = ''+Math.random()
-          var v = ''+Math.random()
+      ;this.act('nores:1',function(err,out){
+        if(err) return done(err);
+        assert.equal( null, out )
 
-          this.act('faf:1,k:"'+k+'",v:"'+v+'"')
 
-          setTimeout(function(){
-            assert.equal( v, fafmap[k] )
-            done()
-          },222)
-        })
+        // test fire-and-forget
+        var k = ''+Math.random()
+        var v = ''+Math.random()
+
+        this.act('faf:1,k:"'+k+'",v:"'+v+'"')
+
+        setTimeout(function(){
+          assert.equal( v, fafmap[k] )
+          done()
+        },222)
       })
-    })
+
+      }) }) })
 }
 
 
