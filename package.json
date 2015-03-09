@@ -1,6 +1,6 @@
 {
   "name": "seneca-transport-test",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Standard test cases for Seneca transports.",
   "main": "transport-test.js",
   "scripts": {

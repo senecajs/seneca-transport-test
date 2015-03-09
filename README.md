@@ -15,8 +15,9 @@ For usage exmaples, see:
 If you're using this module, feel free to contact me on Twitter if you
 have any questions! :) [@rjrodger](http://twitter.com/rjrodger)
 
-Current Version: 0.1.2
+Current Version: 0.1.3
 
-Tested on: Node 0.10.29, Seneca 0.5.18
+Tested on: Node 0.10.36, Seneca 0.6.1
+
 
 
