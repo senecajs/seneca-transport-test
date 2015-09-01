@@ -3,6 +3,7 @@
 
 
 var assert = require('assert')
+var async = require('async')
 
 
 // TODO: also test fire-and-forget
@@ -210,10 +211,75 @@ function foo_fault( require, type, port, speed ) {
   })
 }
 
+function multiple_origin_client ( seneca, type, port ) {
+  var pn = (port<0?-1*port:port)
 
+  return seneca
+    .client({type:type,port:pn});
+}
+
+function multiple_origin_worker ( seneca, type, port ) {
+  return seneca
+    .add({ role: 'test-worker', cmd: 'ping' }, function (args, done) {
+      return done(null, { msg: 'pong' });
+    })
+    .listen({type:type,port:(port?(port<0?-1*port:port+1):10102)});
+}
+
+function multiple_origin_run ( clients, done, type, port ) {
+  var i = 0;
+
+  async.whilst(
+    function () { return i < 100; },
+    function (next) {
+      var client = clients[i % 2];
+
+      client.act('role:test-worker,cmd:ping',function(err,out){
+        if(err) return done(err);
+        assert.equal( '{"msg":"pong"}', JSON.stringify(out) )
+        i += 1;
+        next();
+      });
+    },
+    done
+  );
+}
+
+function multiple_origin_close( services, fin ) {
+  async.each(services, function (service, next) {
+    service.close(next);
+  }, fin);
+}
+
+function multiple_origin_test ( tname, require, fin, type, port ) {
+  var service_fns = [ multiple_origin_client, multiple_origin_client,
+    multiple_origin_worker, multiple_origin_worker ];
+
+  async.map(service_fns, function (fn, next) {
+    var service = fn(
+      require('seneca')({log:'silent'}).use('../'+tname, { retry: false }), type, port );
+
+    service.ready(function (err) {
+      next(err, service);
+    });
+
+  }, function (err, services) {
+    if (err) return fin(err);
+
+    var clients = services.slice(0,2);
+
+    multiple_origin_run(clients, done, type, port)
+
+    function done(err) {
+      if(err) return fin(err);
+      multiple_origin_close( services, fin )
+    }
+  })
+}
 
 module.exports = {
   foo_test: foo_test,
   foo_pintest: foo_pintest,
   foo_fault: foo_fault,
+  multiple_origin_test: multiple_origin_test
 }
