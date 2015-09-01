@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/rjrodger/seneca-transport-test/issues"
   },
-  "homepage": "https://github.com/rjrodger/seneca-transport-test"
+  "homepage": "https://github.com/rjrodger/seneca-transport-test",
+  "dependencies": {
+    "async": "^1.4.2"
+  }
 }
