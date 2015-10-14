@@ -4,7 +4,7 @@
   "description": "Standard test cases for Seneca transports.",
   "main": "transport-test.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\"",
     "lint": "eslint *.js"
   },
   "repository": {
