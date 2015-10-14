@@ -3,9 +3,6 @@
 
 var assert = require('assert')
 var lab = require('lab')
-
-// TODO: also test fire-and-forget
-
 var fafmap = {}
 
 function foo_plugin () {
@@ -104,7 +101,7 @@ function foo_close_client (client, fin) {
 /**
  * Closes the communication (service)
  */
-function foo_close_service (client, service, fin) {
+function foo_close_service (service, fin) {
   service.close(function (err) {
     if (err) return fin(err)
     fin()
@@ -118,38 +115,26 @@ function basictest (settings) {
   var it = script.it
   var type = settings.type
   var port = settings.port
+  var service
 
-  describe('Basic Transport Tests', function () {
-    var service
-    script.before(function before (done) {
+  describe('Basic Transport for type ' + type, function () {
+    script.before(function (done) {
       service = foo_service(si, type, port)
       service.ready(function () {
         done()
       })
     })
 
-    it('should execute fire and forget', function (done) {
-      var client = foo_run(si, type, port, function (err) {
-        if (err) return done(err)
-        foo_close_client(client, done)
-      })
-    })
-
     it('should execute three consecutive calls', function (done) {
       var client = foo_run(si, type, port, function (err) {
-        if (err) return done(err)
+        if (err) {
+          return done(err)
+        }
         foo_close_client(client, done)
       })
     })
 
-    it('should execute two consecutive calls using pin', function (done) {
-      var client = foo_pinrun(si, type, port, function (err) {
-        if (err) return done(err)
-        foo_close_client(client, done)
-      })
-    })
-
-    script.after(function before (done) {
+    script.after(function (done) {
       foo_close_service(service, done)
     })
   })
@@ -157,61 +142,41 @@ function basictest (settings) {
   return script
 }
 
-function foo_fault (require, type, port, speed) {
-  speed = speed ? parseInt(speed, 10) : 2
-  var service = foo_service(require('seneca')({log: 'silent'}).use('..'), type, port)
+function basicpintest (settings) {
+  var si = settings.seneca
+  var script = settings.script || lab.script()
+  var describe = script.describe
+  var it = script.it
+  var type = settings.type
+  var port = settings.port
+  var service
 
-  service.ready(function () {
-    var client = require('seneca')({log: 'silent'}).use('..').client({type: type, port: port})
-    var i = 0
-    console.log('CALL ' + i)
-    client.act('foo:1,bar:' + i, console.log)
-    i++
+  describe('Basic Transport using pin for type ' + type, function () {
+    script.before(function (done) {
+      service = foo_service(si, type, port)
+      service.ready(function () {
+        done()
+      })
+    })
 
-    var c0 = setInterval(function () {
-      console.log('CALL ' + i)
-      client.act('foo:1,bar:' + i, console.log)
-      i++
-    }, 1000 / speed)
+    it('should execute two consecutive calls using pin', function (done) {
+      var client = foo_pinrun(si, type, port, function (err) {
+        if (err) {
+          return done(err)
+        }
+        foo_close_client(client, done)
+      })
+    })
 
-    setTimeout(function () {
-      console.log('CLOSE SERVER')
-      service.close(console.log)
-      i = 100
-    }, 5000 / speed)
-
-    setTimeout(function () {
-      console.log('RESTART SERVER')
-      service = foo_service(
-        require('seneca')({log: 'silent'}).use('..'),
-        type, port)
-    }, 9000 / speed)
-
-    setTimeout(function () {
-      console.log('NEW CLIENT')
-      client.close(console.log)
-      clearInterval(c0)
-      i = 1000
-
-      client =
-        require('seneca')({log: 'silent'})
-        .use('..')
-        .client({type: type, port: port})
-
-      setInterval(function () {
-        console.log('CALLB ' + i)
-        client.act('foo:1,bar:' + i, console.log)
-        i++
-      }, 1000 / speed)
-    },
-    14000 / speed)
-    setTimeout(function () {
-      console.log('KILL AND RESTART TRANSPORT MANUALLY...')
-    }, 19000 / speed)
+    script.after(function (done) {
+      foo_close_service(service, done)
+    })
   })
+
+  return script
 }
 
 module.exports = {
   basictest: basictest,
-  foo_fault: foo_fault
+  basicpintest: basicpintest
 }
