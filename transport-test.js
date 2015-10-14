@@ -111,7 +111,7 @@ function foo_close_service (client, service, fin) {
   })
 }
 
-function basic_tests (settings) {
+function basictest (settings) {
   var si = settings.seneca
   var script = settings.script || lab.script()
   var describe = script.describe
@@ -153,6 +153,8 @@ function basic_tests (settings) {
       foo_close_service(service, done)
     })
   })
+
+  return script
 }
 
 function foo_fault (require, type, port, speed) {
@@ -210,6 +212,6 @@ function foo_fault (require, type, port, speed) {
 }
 
 module.exports = {
-  basic_tests: basic_tests,
+  basictest: basictest,
   foo_fault: foo_fault
 }
