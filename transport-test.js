@@ -2,6 +2,7 @@
 'use strict'
 
 var assert = require('assert')
+var lab = require('lab')
 
 // TODO: also test fire-and-forget
 
@@ -13,28 +14,34 @@ function foo_plugin () {
   this.add('foo:3', function (args, done) { done(null, {dee: '3-' + args.bar}) })
   this.add('foo:4', function (args, done) { done(null, {dee: '4-' + args.bar}) })
   this.add('foo:5', function (args, done) { done(null, {dee: '5-' + args.bar}) })
-
   this.add('nores:1', function (args, done) { done() })
-
   this.add('faf:1', function (args, done) { fafmap[args.k] = args.v; done() })
-
   this.add('role:a,cmd:1', function (args, done) { this.good({out: 'a1-' + args.bar}) })
   this.add('role:b,cmd:2', function (args, done) { this.good({out: 'b2-' + args.bar}) })
 }
 
+/**
+ * Register a service listening on 3 ports:
+ * - port
+ * - port + 1 (default: 10102)
+ * - port + 2 (default: 10103)
+ */
 function foo_service (seneca, type, port) {
   return seneca
     .use(foo_plugin)
-    .listen({type: type, port: (port ? (port < 0 ? -1 * port : port + 1) : 10102), pin: {role: 'a', cmd: '*'}})
     .listen({type: type, port: (port < 0 ? -1 * port : port)})
+    .listen({type: type, port: (port ? (port < 0 ? -1 * port : port + 1) : 10102), pin: {role: 'a', cmd: '*'}})
     .listen({type: type, port: (port ? (port < 0 ? -1 * port : port + 2) : 10103), pin: {role: 'b', cmd: '*'}})
 }
 
-function foo_run (seneca, done, type, port) {
+/**
+ * Run 3 calls on foo_plugin for the transport of a given type on a port.
+ */
+function foo_run (seneca, type, port, done) {
   var pn = (port < 0 ? -1 * port : port)
 
   return seneca
-    .client({type: type, port: pn})
+    .client({type: type, port: pn}) // Client for pn
     .ready(function () {
       this.act('foo:1,bar:A', function (err, out) {
         if (err) return done(err)
@@ -63,11 +70,13 @@ function foo_run (seneca, done, type, port) {
     })
 }
 
-function foo_pinrun (seneca, done, type, port) {
+/**
+* Run 2 calls on foo_plugin for the transport of a given type using pin.
+ */
+function foo_pinrun (seneca, type, port, done) {
   return seneca
     .client({type: type, port: (port ? (port < 0 ? -1 * port : port + 1) : 10102), pin: {role: 'a', cmd: '*'}})
-    .client({type: type, port: (port ? (port < 0 ? -1 * port : port + 2) : 10103),
-             pin: {role: 'b', cmd: '*'}})
+    .client({type: type, port: (port ? (port < 0 ? -1 * port : port + 2) : 10103), pin: {role: 'b', cmd: '*'}})
     .ready(function () {
       this.act('role:a,cmd:1,bar:B', function (err, out) {
         if (err) return done(err)
@@ -82,51 +91,83 @@ function foo_pinrun (seneca, done, type, port) {
     })
 }
 
-function foo_close (client, service, fin) {
+/**
+ * Closes the communication (client)
+ */
+function foo_close_client (client, fin) {
   client.close(function (err) {
     if (err) return fin(err)
-    service.close(function (err) {
-      return fin(err)
+    fin()
+  })
+}
+
+/**
+ * Closes the communication (service)
+ */
+function foo_close_service (client, service, fin) {
+  service.close(function (err) {
+    if (err) return fin(err)
+    fin()
+  })
+}
+
+function basic_tests (settings) {
+  var si = settings.seneca
+  var script = settings.script || lab.script()
+  var describe = script.describe
+  var it = script.it
+  var type = settings.type
+  var port = settings.port
+
+  describe('Basic Transport Tests', function () {
+    var service
+    script.before(function before (done) {
+      service = foo_service(si, type, port)
+      service.ready(function () {
+        done()
+      })
     })
-  })
-}
 
-function foo_test (tname, require, fin, type, port) {
-  var service = foo_service(require('seneca')({log: 'silent'}).use('../' + tname), type, port)
-  service.ready(function () {
-    var client = foo_run(require('seneca')({log: 'silent'}).use('../' + tname), done, type, port)
-    function done (err) {
-      if (err) return fin(err)
-      foo_close(client, service, fin)
-    }
-  })
-}
+    it('should execute fire and forget', function (done) {
+      var client = foo_run(si, type, port, function (err) {
+        if (err) return done(err)
+        foo_close_client(client, done)
+      })
+    })
 
-function foo_pintest (tname, require, fin, type, port) {
-  var service = foo_service(require('seneca')({log: 'silent'}).use('../' + tname), type, port)
-  service.ready(function () {
-    var client = foo_pinrun(require('seneca')({log: 'silent'}).use('../' + tname), done, type, port)
-    function done (err) {
-      if (err) return fin(err)
-      foo_close(client, service, fin)
-    }
+    it('should execute three consecutive calls', function (done) {
+      var client = foo_run(si, type, port, function (err) {
+        if (err) return done(err)
+        foo_close_client(client, done)
+      })
+    })
+
+    it('should execute two consecutive calls using pin', function (done) {
+      var client = foo_pinrun(si, type, port, function (err) {
+        if (err) return done(err)
+        foo_close_client(client, done)
+      })
+    })
+
+    script.after(function before (done) {
+      foo_close_service(service, done)
+    })
   })
 }
 
 function foo_fault (require, type, port, speed) {
   speed = speed ? parseInt(speed, 10) : 2
   var service = foo_service(require('seneca')({log: 'silent'}).use('..'), type, port)
+
   service.ready(function () {
-    var client = require('seneca')({log: 'silent'})
-          .use('..')
-          .client({type: type, port: port})
+    var client = require('seneca')({log: 'silent'}).use('..').client({type: type, port: port})
     var i = 0
-    console.log('CALLA ' + i)
+    console.log('CALL ' + i)
     client.act('foo:1,bar:' + i, console.log)
     i++
 
     var c0 = setInterval(function () {
-      console.log('CALLA ' + i)
+      console.log('CALL ' + i)
       client.act('foo:1,bar:' + i, console.log)
       i++
     }, 1000 / speed)
@@ -169,7 +210,6 @@ function foo_fault (require, type, port, speed) {
 }
 
 module.exports = {
-  foo_test: foo_test,
-  foo_pintest: foo_pintest,
+  basic_tests: basic_tests,
   foo_fault: foo_fault
 }
