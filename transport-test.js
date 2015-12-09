@@ -72,7 +72,9 @@ function foo_run (seneca, type, port, done) {
  */
 function foo_pinrun (seneca, type, port, done) {
   return seneca
-    .client({type: type, port: (port ? (port < 0 ? -1 * port : port + 1) : 10102), pin: {role: 'a', cmd: '*'}})
+    // pin provided as string
+    .client({type: type, port: (port ? (port < 0 ? -1 * port : port + 1) : 10102), pin: 'role: a, cmd:*'})
+    // pin provided as object
     .client({type: type, port: (port ? (port < 0 ? -1 * port : port + 2) : 10103), pin: {role: 'b', cmd: '*'}})
     .ready(function () {
       this.act('role:a,cmd:1,bar:B', function (err, out) {
