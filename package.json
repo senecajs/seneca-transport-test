@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rjrodger/seneca-transport-test.git"
+    "url": "https://github.com/senecajs/seneca-transport-test.git"
   },
   "keywords": [
     "seneca",
@@ -21,9 +21,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rjrodger/seneca-transport-test/issues"
+    "url": "https://github.com/senecajs/seneca-transport-test/issues"
   },
-  "homepage": "https://github.com/rjrodger/seneca-transport-test",
+  "homepage": "https://github.com/senecajs/seneca-transport-test",
   "devDependencies": {
     "eslint-config-seneca": "1.x.x",
     "eslint-plugin-hapi": "2.x.x",

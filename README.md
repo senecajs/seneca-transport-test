@@ -17,7 +17,7 @@ For usage examples, see:
 
    * [seneca-transport test](https://github.com/senecajs/seneca-transport/blob/master/test/transport.test.js)
    * [seneca-redis-transport test](https://github.com/rjrodger/seneca-redis-transport/blob/master/test/redis-transport.test.js)
-   * [seneca-beanstalk-transport test](https://github.com/rjrodger/seneca-beanstalk-transport/blob/master/test/beanstalk-transport.test.js)
+   * [seneca-beanstalk-transport test](https://github.com//seneca-beanstalk-transport/blob/master/test/beanstalk-transport.test.js)
 
 ### Seneca compatibility
 Supports Seneca versions **1.x** and **2.x**
