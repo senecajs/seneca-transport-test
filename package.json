@@ -4,6 +4,8 @@
   "description": "Standard test cases for Seneca transports.",
   "main": "transport-test.js",
   "scripts": {
+    "test": "lab test/*.test.js -r console -v -L $LAB_FLAGS",
+    "test:node6": "LAB_FLAGS='--leaks' && npm test",
     "lint": "node ./node_modules/.bin/lab -L transport-test.js"
   },
   "repository": {
