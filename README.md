@@ -15,9 +15,9 @@ Standard test cases for seneca transports.
 
 For usage examples, see:
 
-   * [seneca-transport test](https://github.com/senecajs/seneca-transport/blob/master/test/transport.test.js)
+   * [seneca-transport test](https://github.com/senecajs/seneca-transport/tree/master/test)
    * [seneca-redis-transport test](https://github.com/rjrodger/seneca-redis-transport/blob/master/test/redis-transport.test.js)
-   * [seneca-beanstalk-transport test](https://github.com//seneca-beanstalk-transport/blob/master/test/beanstalk-transport.test.js)
+   * [seneca-beanstalk-transport test](https://github.com/senecajs/seneca-beanstalk-transport/blob/master/test/beanstalk-transport.test.js)
 
 ### Seneca compatibility
 Supports Seneca versions **1.x** and **2.x**
@@ -51,8 +51,8 @@ Licensed under [MIT][].
 
 [npm-badge]: https://img.shields.io/npm/v/seneca-transport-test.svg
 [npm-url]: https://npmjs.com/package/seneca-transport-test
-[travis-badge]: https://travis-ci.org/rjrodger/seneca-transport-test.svg
-[travis-url]: https://travis-ci.org/rjrodger/seneca-transport-test
+[travis-badge]: https://travis-ci.org/senecajs/seneca-transport-test.svg
+[travis-url]: https://travis-ci.org/senecajs/seneca-transport-test
 [codeclimate-badge]: https://codeclimate.com/github/rjrodger/seneca-transport-test/badges/gpa.svg
 [codeclimate-url]: https://codeclimate.com/github/rjrodger/seneca-transport-test
 [coverage-badge]: https://coveralls.io/repos/rjrodger/seneca-transport-test/badge.svg?branch=master&service=github
