@@ -1,8 +1,8 @@
 /* Copyright (c) 2014 Richard Rodger, MIT License */
 'use strict'
 
-var assert = require('assert')
-var lab = require('lab')
+var Assert = require('assert')
+var Lab = require('lab')
 var fafmap = {}
 
 function foo_plugin () {
@@ -42,15 +42,15 @@ function foo_run (seneca, type, port, done) {
     .ready(function () {
       this.act('foo:1,bar:A', function (err, out) {
         if (err) return done(err)
-        assert.equal('{"dee":"1-A"}', JSON.stringify(out))
+        Assert.equal('{"dee":"1-A"}', JSON.stringify(out))
 
         this.act('foo:1,bar:AA', function (err, out) {
           if (err) return done(err)
-          assert.equal('{"dee":"1-AA"}', JSON.stringify(out))
+          Assert.equal('{"dee":"1-AA"}', JSON.stringify(out))
 
           this.act('nores:1', function (err, out) {
             if (err) return done(err)
-            assert.equal(null, out)
+            Assert.equal(null, out)
             // test fire-and-forget
             var k = '' + Math.random()
             var v = '' + Math.random()
@@ -58,7 +58,7 @@ function foo_run (seneca, type, port, done) {
             this.act('faf:1,k:"' + k + '",v:"' + v + '"')
 
             setTimeout(function () {
-              assert.equal(v, fafmap[k])
+              Assert.equal(v, fafmap[k])
               done()
             }, 222)
           })
@@ -79,11 +79,11 @@ function foo_pinrun (seneca, type, port, done) {
     .ready(function () {
       this.act('role:a,cmd:1,bar:B', function (err, out) {
         if (err) return done(err)
-        assert.equal('{"out":"a1-B"}', JSON.stringify(out))
+        Assert.equal('{"out":"a1-B"}', JSON.stringify(out))
 
         this.act('role:b,cmd:2,bar:BB', function (err, out) {
           if (err) return done(err)
-          assert.equal('{"out":"b2-BB"}', JSON.stringify(out))
+          Assert.equal('{"out":"b2-BB"}', JSON.stringify(out))
           done()
         })
       })
@@ -112,7 +112,7 @@ function foo_close_service (service, fin) {
 
 function basictest (settings) {
   var si = settings.seneca
-  var script = settings.script || lab.script()
+  var script = settings.script || Lab.script()
   var describe = script.describe
   var it = script.it
   var type = settings.type
@@ -146,7 +146,7 @@ function basictest (settings) {
 
 function basicpintest (settings) {
   var si = settings.seneca
-  var script = settings.script || lab.script()
+  var script = settings.script || Lab.script()
   var describe = script.describe
   var it = script.it
   var type = settings.type
