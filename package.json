@@ -5,7 +5,8 @@
   "main": "transport-test.js",
   "scripts": {
     "test": "lab -dL transport-test.js",
-    "lint": "lab -dL transport-test.js"
+    "lint": "lab -dL transport-test.js",
+    "annotate": "docco transport.js -o docs/annotated"
   },
   "repository": {
     "type": "git",
