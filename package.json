@@ -38,7 +38,5 @@
     "LICENSE",
     "README.md",
     "transport-test.js"
-  ],
-  "pre-commit": [
   ]
 }
