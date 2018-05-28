@@ -1,4 +1,5 @@
-/* Copyright (c) 2014 Richard Rodger, MIT License */
+/* Copyright (c) 2014-2018 Richard Rodger and other contributors, MIT License */
+
 'use strict'
 
 var Assert = require('assert')
