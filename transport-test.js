@@ -1,9 +1,9 @@
-/* Copyright (c) 2014-2018 Richard Rodger and other contributors, MIT License */
+/* Copyright (c) 2014-2019 Richard Rodger and other contributors, MIT License */
 
 'use strict'
 
 var Assert = require('assert')
-var Lab = require('lab')
+var Lab = require('@hapi/lab')
 var fafmap = {}
 
 function foo_plugin () {
@@ -121,24 +121,30 @@ function basictest (settings) {
   var service
 
   describe('Basic Transport for type ' + type, function () {
-    script.before(function (done) {
-      service = foo_service(si, type, port)
-      service.ready(function () {
-        done()
+    script.before(() => {
+      return new Promise((done) => {
+        service = foo_service(si, type, port)
+        service.ready(function () {
+          done()
+        })
       })
     })
 
-    it('should execute three consecutive calls', function (done) {
-      var client = foo_run(si, type, port, function (err) {
-        if (err) {
-          return done(err)
-        }
-        foo_close_client(client, done)
+    it('should execute three consecutive calls', async function () {
+      return new Promise((done,fail)=>{
+        var client = foo_run(si, type, port, function (err) {
+          if (err) {
+            return fail(err)
+          }
+          foo_close_client(client, done)
+        })
       })
     })
 
-    script.after(function (done) {
-      foo_close_service(service, done)
+    script.after(() => {
+      return new Promise((done) => {
+        foo_close_service(service, done)
+      })
     })
   })
 
@@ -155,24 +161,30 @@ function basicpintest (settings) {
   var service
 
   describe('Basic Transport using pin for type ' + type, function () {
-    script.before(function (done) {
-      service = foo_service(si, type, port)
-      service.ready(function () {
-        done()
+    script.before(() => {
+      return new Promise((done) => {
+        service = foo_service(si, type, port)
+        service.ready(function () {
+          done()
+        })
       })
     })
 
-    it('should execute two consecutive calls using pin', function (done) {
-      var client = foo_pinrun(si, type, port, function (err) {
-        if (err) {
-          return done(err)
-        }
-        foo_close_client(client, done)
+    it('should execute two consecutive calls using pin', async function () {
+      return new Promise((done,fail)=>{
+        var client = foo_pinrun(si, type, port, function (err) {
+          if (err) {
+            return fail(err)
+          }
+          foo_close_client(client, done)
+        })
       })
     })
 
-    script.after(function (done) {
-      foo_close_service(service, done)
+    script.after(() => {
+      return new Promise((done) => {
+        foo_close_service(service, done)
+      })
     })
   })
 

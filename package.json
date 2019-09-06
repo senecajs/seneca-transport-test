@@ -1,12 +1,14 @@
 {
   "name": "seneca-transport-test",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Standard test cases for Seneca transports.",
   "main": "transport-test.js",
   "scripts": {
     "test": "lab transport-test.js -I URL,URLSearchParams",
     "coveralls": "lab -s -P test -r lcov  -I URL,URLSearchParams | coveralls",
-    "coverage": "lab -v -P test -L -t 80 -r html > coverage.html"
+    "coverage": "lab -v -P test -L -t 80 -r html > coverage.html",
+    "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
+    "repo-publish": "npm run repo-tag && npm publish --access public --registry http://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
@@ -27,7 +29,8 @@
   },
   "homepage": "https://github.com/senecajs/seneca-transport-test",
   "devDependencies": {
-    "lab": "14"
+    "@hapi/lab": "^20.2.2",
+    "acorn": "^7.0.0"
   },
   "files": [
     "LICENSE",
