@@ -1,54 +1,65 @@
 ![Seneca](http://senecajs.org/files/assets/seneca-logo.png)
+> A [Seneca.js][] plugin
 
-# seneca-transport-test
-[![npm version][npm-badge]][npm-url]
-[![Build Status][travis-badge]][travis-url]
-[![Coverage Status][coverage-badge]][coverage-url]
-[![Code Climate][codeclimate-badge]][codeclimate-url]
-[![Dependency Status][david-badge]][david-url]
-[![Gitter][gitter-badge]][gitter-url]
+# @seneca/transport-test
 
-
-## Description
-
-Standard test cases for seneca transports.
-
-For usage examples, see:
-
-   * [seneca-transport test](https://github.com/senecajs/seneca-transport/tree/master/test)
-   * [seneca-redis-transport test](https://github.com/rjrodger/seneca-redis-transport/blob/master/test/redis-transport.test.js)
-   * [seneca-beanstalk-transport test](https://github.com/senecajs/seneca-beanstalk-transport/blob/master/test/beanstalk-transport.test.js)
-
-### Seneca compatibility
-Supports Seneca versions **1.x** and **2.x**
+| ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
+|---|---|
 
 ## Install
+
 To install, simply use npm. Remember you will need to install [Seneca.js][] if you haven't already.
 
 ```sh
 npm install seneca-transport-test
 ```
 
+## Quick Example
+
+```js
+var TransportTest = require('seneca-transport-test')
+TransportTest.run(seneca)
+```
+
+## More Examples
+
+See [test/](test/) for usage examples.
+
+## Motivation
+
+Standard test suite for Seneca transport plugins. All transport plugins should pass these tests.
+
 ## Support
 
-If you're using this module, feel free to contact me on Twitter if you
-have any questions! :) [@rjrodger](http://twitter.com/rjrodger)
+If you're using this module and need help, you can:
+
+- Post a [github issue][]
+- Tweet to [@senecajs][]
+
+## API
+
+See [source](https://github.com/senecajs/seneca-transport-test) for available test suites.
 
 ## Contributing
-The [Senecajs org][] encourage open participation. If you feel you can help in any way, be it with
-documentation, examples, extra testing, or new features please get in touch.
 
-## Test
-To run tests, simply use npm:
+The [Senecajs org][] encourages open participation. If you feel you can help in any way, be it with documentation, examples, extra testing, or new features please get in touch.
 
-```
+### Running tests
+
+```sh
 npm run test
 ```
 
-## License
-Copyright (c) 2014-2016, Richard Rodger and other contributors.
-Licensed under [MIT][].
+## Background
 
+Used by all official Seneca transport plugins to verify compliance.
+
+[![npm version][npm-badge]][npm-url]
+[![Build Status][travis-badge]][travis-url]
+[![Coverage Status][coverage-badge]][coverage-url]
+[![Code Climate][codeclimate-badge]][codeclimate-url]
+[![Dependency Status][david-badge]][david-url]
+[![Gitter][gitter-badge]][gitter-url]
 [npm-badge]: https://img.shields.io/npm/v/seneca-transport-test.svg
 [npm-url]: https://npmjs.com/package/seneca-transport-test
 [travis-badge]: https://travis-ci.org/senecajs/seneca-transport-test.svg
