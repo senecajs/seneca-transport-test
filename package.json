@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/senecajs/seneca-transport-test",
   "devDependencies": {
-    "@hapi/lab": "^20.2.2",
+    "@hapi/lab": "^26.0.1",
     "acorn": "^7.0.0"
   },
   "files": [
