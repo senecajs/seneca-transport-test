@@ -1,12 +1,13 @@
 {
   "name": "@seneca/transport-test",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Standard test cases for Seneca transports.",
   "main": "transport-test.js",
   "scripts": {
-    "test": "lab transport-test.js -I URL,URLSearchParams",
-    "coveralls": "lab -s -P test -r lcov  -I URL,URLSearchParams | coveralls",
-    "coverage": "lab -v -P test -L -t 80 -r html > coverage.html",
+    "test": "lab -v test/lab.test.js && node --test --test-force-exit test/node.test.js",
+    "test-lab": "lab -v test/lab.test.js",
+    "test-node": "node --test --test-force-exit test/node.test.js",
+    "coverage": "lab -c -r console -o stdout -r html -o coverage.html test/lab.test.js",
     "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
     "repo-publish": "npm run repo-tag && npm publish --access public --registry http://registry.npmjs.org"
   },
@@ -30,11 +31,14 @@
   "homepage": "https://github.com/senecajs/seneca-transport-test",
   "devDependencies": {
     "@hapi/lab": "^26.0.1",
-    "acorn": "^7.0.0"
+    "seneca": "^4.0.0-rc5",
+    "seneca-transport": "^8.3.0"
   },
   "files": [
     "LICENSE",
     "README.md",
-    "transport-test.js"
+    "CHANGES.md",
+    "transport-test.js",
+    "docs"
   ]
 }
