@@ -19,7 +19,13 @@
   error. Seneca catches errors thrown inside `act` callbacks and only
   logs them, so such cases used to fail later as a timeout. A failed
   fire-and-forget check is no longer an uncaught exception.
-* The client instance is closed when a case fails too.
+* The client instance is closed when a case fails too, and by the
+  `after` hook when a case times out before its callback runs, so that a
+  broken transport does not keep the process alive.
+* `settings.seneca`, `settings.client` and the instances that a
+  `settings.seneca` function returns must have the Seneca `act`, `use`
+  and `close` methods; anything else fails with a settings error instead
+  of a later `TypeError`.
 * New setting `timeout` (default 5555 ms): the limit for each case, and
   for the service to become ready and to close. It replaces lab's
   default of 2000 ms per case. A service that does not become ready or

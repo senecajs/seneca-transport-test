@@ -171,7 +171,7 @@ function wait_ready (seneca, timeout, what) {
 
     seneca.ready(function (err) {
       clearTimeout(timer)
-      if (err instanceof Error) return reject(err)
+      if (err) return reject(err)
       resolve()
     })
   })
@@ -196,19 +196,42 @@ function wait_close (seneca, timeout, what) {
   })
 }
 
+// Whether x has the Seneca instance methods the cases use.
+function is_seneca (x) {
+  return null != x &&
+    'function' === typeof x.act &&
+    'function' === typeof x.use &&
+    'function' === typeof x.close
+}
+
 // Resolve the settings shared by all test functions.
 function make_context (settings) {
   settings = settings || {}
 
   var seneca = settings.seneca
 
-  if (null == seneca || ('object' !== typeof seneca && 'function' !== typeof seneca)) {
+  // A factory makes a separate instance for the service and for the client.
+  var factory = 'function' === typeof seneca && !is_seneca(seneca)
+
+  if (!factory && !is_seneca(seneca)) {
     throw new Error('seneca-transport-test: settings.seneca must be a Seneca ' +
       'instance or a function that returns a new Seneca instance')
   }
 
-  // A factory makes a separate instance for the service and for the client.
-  var factory = 'function' === typeof seneca && 'function' !== typeof seneca.act
+  if (null != settings.client && !is_seneca(settings.client)) {
+    throw new Error('seneca-transport-test: settings.client must be a Seneca ' +
+      'instance')
+  }
+
+  // A new instance from the factory.
+  function make () {
+    var instance = seneca()
+    if (!is_seneca(instance)) {
+      throw new Error('seneca-transport-test: the settings.seneca function ' +
+        'must return a new Seneca instance')
+    }
+    return instance
+  }
 
   var script = settings.script
 
@@ -227,7 +250,7 @@ function make_context (settings) {
 
     // Instance for the service side.
     service: function () {
-      return factory ? seneca() : seneca
+      return factory ? make() : seneca
     },
 
     // Instance for the client side: settings.client, or a new instance from
@@ -236,9 +259,59 @@ function make_context (settings) {
     // transport (kept for compatibility).
     client: function () {
       if (null != settings.client) return settings.client
-      return factory ? seneca() : seneca
+      return factory ? make() : seneca
     }
   }
+}
+
+// Holds the client instance of the running case until it is closed. A case
+// that times out never reaches its callback, so the after hook closes the
+// client then, so that its sockets and timers do not keep the process alive.
+function make_client_holder () {
+  var open = null
+  return {
+    hold: function (instance) {
+      open = instance
+      return instance
+    },
+    take: function () {
+      var instance = open
+      open = null
+      return instance
+    }
+  }
+}
+
+// Body of a case: run(client, done) on the case's client, then close the
+// client, also on failure, so that the process can exit.
+function run_case (ctx, holder, run) {
+  return new Promise(function (done, fail) {
+    var client = holder.hold(ctx.client())
+
+    run(client, function (err) {
+      var open = holder.take()
+
+      // Already closed by the after hook (the case timed out).
+      if (null == open) return err ? fail(err) : done()
+
+      foo_close_client(open, function (close_err) {
+        if (err) return fail(err)
+        if (close_err) return fail(close_err)
+        done()
+      })
+    })
+  })
+}
+
+// After hook of a case group: close a client left open by a case that timed
+// out, then the service.
+function close_all (ctx, holder, service) {
+  var client = holder.take()
+  var first = client === service ? null : client
+
+  return wait_close(first, ctx.timeout, 'client').then(function () {
+    return wait_close(service, ctx.timeout, 'service')
+  })
 }
 
 function basictest (settings) {
@@ -249,6 +322,7 @@ function basictest (settings) {
   var type = ctx.type
   var port = ctx.port
   var service
+  var holder = make_client_holder()
 
   describe('Basic Transport for type ' + type, function () {
     script.before(function () {
@@ -257,21 +331,13 @@ function basictest (settings) {
     })
 
     it('should execute three consecutive calls', {timeout: ctx.timeout}, function () {
-      return new Promise(function (done, fail) {
-        var client = foo_run(ctx.client(), type, port, function (err) {
-          // Close the client instance on failure too, so that the process
-          // can exit.
-          foo_close_client(client, function (close_err) {
-            if (err) return fail(err)
-            if (close_err) return fail(close_err)
-            done()
-          })
-        })
+      return run_case(ctx, holder, function (client, done) {
+        foo_run(client, type, port, done)
       })
     })
 
     script.after(function () {
-      return wait_close(service, ctx.timeout, 'service')
+      return close_all(ctx, holder, service)
     })
   })
 
@@ -286,6 +352,7 @@ function basicpintest (settings) {
   var type = ctx.type
   var port = ctx.port
   var service
+  var holder = make_client_holder()
 
   describe('Basic Transport using pin for type ' + type, function () {
     script.before(function () {
@@ -294,21 +361,13 @@ function basicpintest (settings) {
     })
 
     it('should execute two consecutive calls using pin', {timeout: ctx.timeout}, function () {
-      return new Promise(function (done, fail) {
-        var client = foo_pinrun(ctx.client(), type, port, function (err) {
-          // Close the client instance on failure too, so that the process
-          // can exit.
-          foo_close_client(client, function (close_err) {
-            if (err) return fail(err)
-            if (close_err) return fail(close_err)
-            done()
-          })
-        })
+      return run_case(ctx, holder, function (client, done) {
+        foo_pinrun(client, type, port, done)
       })
     })
 
     script.after(function () {
-      return wait_close(service, ctx.timeout, 'service')
+      return close_all(ctx, holder, service)
     })
   })
 

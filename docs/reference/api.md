@@ -20,7 +20,7 @@ Registers the suite `Basic Transport for type <type>`:
 | ------------ | ------------ |
 | `before` | Takes the service instance (see [Settings](settings.md#seneca-and-client)), loads the [service plugin](messages.md#the-service-plugin) into it and starts the three [listeners](messages.md#listeners). Waits for the instance to be ready (callback form of `ready`); fails after `settings.timeout` ms. |
 | `it('should execute three consecutive calls')` | Takes the client instance, adds a client without pin for the first listener, waits for ready, then makes the [basic calls](messages.md#basic-calls): two `foo:1` calls, one `nores:1` call and one fire-and-forget `faf:1` call. Closes the client instance with `close(callback)`, also when a call failed. The case fails after `settings.timeout` ms. |
-| `after` | Closes the service instance with `close(callback)`; fails after `settings.timeout` ms. |
+| `after` | Closes the client of a case that timed out before it could close it (a separate client instance only), then the service instance, each with `close(callback)`; fails after `settings.timeout` ms. |
 
 Returns `settings.script`, or the lab script the function created when
 `settings.script` was not given.
@@ -44,8 +44,11 @@ The functions raise these errors. Every message starts with
 
 | Message | Cause | Raised by |
 | ------- | ----- | --------- |
-| `settings.seneca must be a Seneca instance or a function that returns a new Seneca instance` | `settings.seneca` is missing or has another type. | The function call itself (thrown). |
+| `settings.seneca must be a Seneca instance or a function that returns a new Seneca instance` | `settings.seneca` is missing, or is neither a function nor an object with the `act`, `use` and `close` methods. | The function call itself (thrown). |
+| `settings.client must be a Seneca instance` | `settings.client` is given but lacks the `act`, `use` or `close` methods. | The function call itself (thrown). |
+| `the settings.seneca function must return a new Seneca instance` | The `settings.seneca` function returned something without those methods. | The `before` hook (service) or the case (client). |
 | `service not ready within <timeout>ms` | The service instance did not become ready: a listen hook did not reply. | The `before` hook. |
+| `client not closed within <timeout>ms` | A case timed out, and closing its client in the `after` hook did not call back. | The `after` hook. |
 | `service not closed within <timeout>ms` | `close()` did not call back: a close action did not continue the chain. | The `after` hook. |
 
 An error replied to a call, or a failed assertion, fails the case with
