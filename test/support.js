@@ -22,16 +22,12 @@ const [transport_major, transport_minor] = transport_version
 const transport_before_8_4 =
   transport_major < 8 || (8 === transport_major && transport_minor < 4)
 
-// seneca-transport before 8.4.0 has two tcp problems on Seneca 4:
-// - On seneca 4.0.0-rc, tcp listeners do not bind: core copies the web path
-//   /act into every listen configuration, and the tcp listener treats any
-//   path as a UNIX socket path.
-// - The close hook of a tcp client without pin does not finish: it is
-//   registered on role:seneca,cmd:close, which has no builtin action on
-//   Seneca 4, so the catch-all client action becomes its prior and the close
-//   message is sent to the transport, where nothing answers it
-//   (action_timeout after 22 seconds). seneca 4.0.0-rc5 never calls hooks on
-//   that pattern, so this shows on 4.0.0.
+// seneca-transport before 8.4.0 cannot run the tcp cases on seneca
+// 4.0.0-rc: core copies the web path /act into every listen
+// configuration, and the tcp listener treats any path as a UNIX socket
+// path, so tcp listeners do not bind. (On seneca 4.0.0 a tcp client
+// without pin also forwarded its close message to the service until the
+// core fix in senecajs/seneca#953, so that case is not skipped there.)
 // Returns the reason to skip the tcp case `name`, or null to run it.
 function tcp_skip (name) {
   if (4 !== seneca_major || !transport_before_8_4) return null
@@ -41,10 +37,6 @@ function tcp_skip (name) {
 
   if (/^4\.0\.0-rc/.test(seneca_version)) {
     return 'tcp listeners do not bind' + installed
-  }
-
-  if ('basictest' === name) {
-    return 'the tcp client without pin does not close' + installed
   }
 
   return null

@@ -35,8 +35,10 @@ through `role:seneca,cmd:close`.
 * seneca 4.0.0 calls them, for compatibility. By default Seneca 4 has
   no builtin action on that pattern, so on an instance with a client
   without pin, the client's action becomes the prior of such a close
-  action: `this.prior(msg, reply)` then sends the close message to the
-  transport.
+  action. The call is a `local$` message, so `this.prior(msg, reply)`
+  passes it on locally instead of sending it to the transport. (Before
+  the core fix in senecajs/seneca#953 the close message was sent to the
+  remote service, which closed its listener.)
 * The core helper `close(seneca, closer)` adds its action on
   `role:seneca,cmd:close` in 4.0.0-rc5, and on `sys:seneca,cmd:close`
   in 4.0.0. Add the close action yourself to work on both.
@@ -81,7 +83,7 @@ What this repository's own tests show for each combination:
 
 | seneca-transport | seneca 3.38 | seneca 4.0.0-rc5 | seneca 4.0.0 |
 | ---------------- | ----------- | ---------------- | ------------ |
-| 8.3.0 (published) | web and tcp pass | web passes; tcp listeners do not bind (they take `path: '/act'` for a UNIX socket path); close actions are not called, so listeners stay open | web passes; tcp pin case passes; in the tcp basic case the client's close waits for an `action_timeout` (22 seconds), see [Closing](#closing) |
+| 8.3.0 (published) | web and tcp pass | web passes; tcp listeners do not bind (they take `path: '/act'` for a UNIX socket path); close actions are not called, so listeners stay open | web and tcp pass (with the core fix in senecajs/seneca#953; without it, the client's close in the tcp basic case waits for an `action_timeout` of 22 seconds, see [Closing](#closing)) |
 | 8.4.0 (not yet published) | web and tcp pass | web and tcp pass | web and tcp pass |
 
 With seneca-transport 8.3.0 on Seneca 4, `type: 'http'` fails too
