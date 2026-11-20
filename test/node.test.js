@@ -3,10 +3,7 @@
 
 // The repository's own test, under node:test: the same cases as
 // test/lab.test.js, with the node:test module as the script.
-// Run with: node --test --test-force-exit test/node.test.js
-// (--test-force-exit is needed with seneca-transport 8.3.0 on seneca
-// 4.0.0-rc5, where the transport's close hooks do not run and the
-// listeners stay open; see docs/how-to/run-the-cases-with-node-test.md)
+// Run with: node --test test/node.test.js
 
 const script = require('node:test')
 
@@ -23,17 +20,9 @@ Shared.basicpintest({ seneca: Support.make, script, type: 'web', port: 10631 })
 Shared.basictest({ seneca: Support.make(), script, type: 'web', port: 10641 })
 Shared.basicpintest({ seneca: Support.make(), script, type: 'web', port: 10651 })
 
-// tcp: a case the installed seneca-transport cannot pass on the installed
-// seneca is reported as skipped, with the reason (see test/support.js)
-for (const [name, port] of [['basictest', 10721], ['basicpintest', 10731]]) {
-  const reason = Support.tcp_skip(name)
-
-  if (reason) {
-    script.it(name + ' over tcp', { skip: reason }, () => {})
-  } else {
-    Shared[name]({ seneca: Support.make, script, type: 'tcp', port })
-  }
-}
+// tcp
+Shared.basictest({ seneca: Support.make, script, type: 'tcp', port: 10721 })
+Shared.basicpintest({ seneca: Support.make, script, type: 'tcp', port: 10731 })
 
 // Settings validation and teardown, with a stand-in script that records the
 // hooks and the case body instead of running them.
