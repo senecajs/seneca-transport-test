@@ -38,12 +38,13 @@ Test these in the transport's own suite.
 ## Why the caller provides the instances
 
 The suite cannot know what a transport needs: options, a broker, other
-plugins. Nor should it choose the Seneca version: a transport may be
-tested against Seneca 3, Seneca 4, or both. So the test functions take
-the instances from the caller, through `settings.seneca` and
-`settings.client`, and the package has no dependency or peer
-dependency on `seneca`. The devDependencies of the transport's project
-decide which Seneca runs the cases.
+plugins. Nor should it choose the Seneca build. So the test functions
+take the instances from the caller, through `settings.seneca` and
+`settings.client`, and the package never loads `seneca` itself. Its
+peer dependency `seneca` `^4.0.0` names the Seneca version it is
+tested with; the devDependencies of the transport's project decide
+which Seneca 4 build runs the cases. Transports tested on Seneca 3 use
+`seneca-transport-test@1`.
 
 ## Why two instances
 

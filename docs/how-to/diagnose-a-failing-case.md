@@ -20,7 +20,7 @@ messages are those of node:test; lab prints the same errors under
 | `seneca-transport-test: service not closed within 5555ms` | Closing the service did not finish. | A close action must call `this.prior(msg, reply)` after releasing its resources. |
 | Log: `No matching action pattern found for { type: '<type>', ... role: 'transport', hook: 'listen' }`, then `=== SENECA FATAL ERROR ===`; the case times out | No action answers the listen hook for this type. | The factory loads the plugin (`.use(...)`), and `type` is the type in the plugin's hook patterns. |
 | Log: `EADDRINUSE` and `=== SENECA FATAL ERROR ===` | A port of the suite is in use. | [Choose the ports](test-a-transport-that-needs-options-or-ports.md#choose-the-ports). |
-| `TypeError: Cannot read properties of undefined (reading 'headers')` in the log, with `type: 'http'` | seneca-transport 8.3.0 on Seneca 4 has no options for the `http` type. | Use `type: 'web'`, or seneca-transport 8.4.0. |
+| `TypeError: Cannot read properties of undefined (reading 'headers')` in the log, with `type: 'http'` | seneca-transport 8.3.0 on Seneca 4 has no options for the `http` type. | Use `type: 'web'` and @seneca/transport 9.0.0. |
 | node:test reports the results but does not exit | Something is still open after `close()`. | [If the process does not exit](run-the-cases-with-node-test.md#5-if-the-process-does-not-exit). |
 
 The table of every call and assertion is in
@@ -37,8 +37,9 @@ function make () {
 }
 ```
 
-Each line starts with the elapsed milliseconds and two characters of
-the instance id, which tell the service's lines from the client's.
+Each line starts with the elapsed milliseconds and the first six
+characters of the instance id, which tell the service's lines from the
+client's.
 `act/IN` and `act/OUT` lines show each message and its reply; `act/ERR`
 lines show errors. Plain `test()` logs at level `warn`, so only
 warnings and errors are printed. The log format is described in the
