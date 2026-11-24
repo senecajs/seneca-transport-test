@@ -1,10 +1,16 @@
-## 1.1.0 2026-10-08
+# Changes
 
-* The package is published as `@seneca/transport-test` (version 1.0.0
-  was published as `seneca-transport-test`).
-* Seneca 4 support: tested against seneca 4.0.0-rc5 and the unreleased
-  4.0.0, with seneca-transport 8.3.0 and the unreleased 8.4.0. Seneca 3
-  instances are still accepted (tested with 3.38). Node.js 24 and 22.
+## 2.0.0 2026-11-20
+
+First release under the name `@seneca/transport-test`. Version 1.1.0
+was prepared in the repository but never published; its changes are
+part of this release.
+
+* Seneca 4: the peer dependency is `seneca` `^4.0.0`. Seneca 3 users
+  stay on `seneca-transport-test@1`. Tested against seneca 4.0.0 with
+  @seneca/transport 9.0.0, over web and tcp.
+* Renamed from `seneca-transport-test` to `@seneca/transport-test`.
+* Node.js 24 or later (`engines.node` `>=24`).
 * The service and the client can be separate Seneca instances: pass a
   function that returns a new instance as `settings.seneca` (it is
   called once for each side), or pass the client instance as
@@ -35,23 +41,19 @@
 * `@hapi/lab` is loaded only when `settings.script` is not given, so the
   cases run under node:test (`script: require('node:test')`) without lab
   installed.
-* `ready` is used in its callback form (the promise form can wait
-  forever on an idle seneca 4.0.0-rc5 instance).
+* `ready` is used in its callback form.
 * `port: 0` is treated like no port (the first listener used to listen
   on port 0, which no client could reach).
 * `settings.seneca` is checked: a missing or invalid value throws an
   error that says what is expected.
 * Repository: a real self test, `test/lab.test.js` (lab 26) and
   `test/node.test.js` (node:test), running both cases against
-  seneca-transport over web and tcp (`npm test` used to run no test).
-  The tcp cases that seneca-transport 8.3.0 cannot pass on Seneca 4 are
-  reported as skipped, with the reason. devDependencies `seneca@^4.0.0-rc5`
-  and `seneca-transport@^8.3.0` added, unused `acorn` removed; `.npmrc`
-  sets `legacy-peer-deps` while published plugins exclude the Seneca 4
-  prerelease from their peer range. The lockfile was regenerated against
-  the public registry. Travis CI configuration and the coveralls script
-  removed; a GitHub Actions workflow is provided in
-  `.patches/0001-ci-add-build-workflow.patch`.
+  @seneca/transport over web and tcp, loaded by its full name
+  (`npm test` used to run no test). Development dependencies `seneca`
+  `^4.0.0` and `@seneca/transport` `^9.0.0` added, unused `acorn`
+  removed. No `package-lock.json` or `.npmrc` is committed. Travis CI
+  configuration, the coveralls script and the `repo-tag` and
+  `repo-publish` scripts removed.
 * Documentation reorganized following the Diátaxis structure (see
   `docs/`); the package now includes `docs/` and `CHANGES.md`.
 

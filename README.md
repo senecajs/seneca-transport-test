@@ -6,9 +6,8 @@
 The standard test cases for Seneca transport plugins. Add them to the
 test suite of your transport to check that messages, replies, pins and
 fire-and-forget calls travel correctly between a service instance and a
-client instance. The cases run under lab or node:test, with Seneca 4
-(tested against 4.0.0-rc5 and the unreleased 4.0.0) and Seneca 3, on
-Node.js 24 and 22.
+client instance. The cases run under lab or node:test, with Seneca 4,
+on Node.js 24 or later. For Seneca 3, use `seneca-transport-test@1`.
 
 [![npm version][npm-badge]][npm-url]
 
@@ -18,15 +17,16 @@ Node.js 24 and 22.
 ## Install
 
 ```sh
-npm install --save-dev @seneca/transport-test
+npm install --save-dev seneca@^4 @seneca/transport-test
 ```
 
-Version 1.0.0 was published as `seneca-transport-test`; from the next
-version the package is `@seneca/transport-test`.
+Version 1.0.0 was published as `seneca-transport-test`; from version
+2.0.0 the package is `@seneca/transport-test`.
 
 The test functions receive Seneca instances from your test, so the
-package has no dependency on `seneca`: install `seneca` and your
-transport plugin yourself.
+package does not load `seneca` itself. It declares the peer dependency
+`seneca` `^4.0.0`: install `seneca` and your transport plugin
+yourself.
 
 ## Quick Example
 
@@ -70,7 +70,7 @@ messages to it through your transport, and the replies are checked.
 * [Diagnose a failing case](docs/how-to/diagnose-a-failing-case.md).
 * The example programs are in [docs/examples](docs/examples/); the
   repository's own tests in [test](test/) run the cases against
-  seneca-transport.
+  @seneca/transport.
 
 ## Motivation
 
@@ -115,8 +115,8 @@ new features please get in touch.
 
 ### Running the tests
 
-The repository's own tests run every case against `seneca-transport`
-under lab and under node:test:
+The repository's own tests run every case against `@seneca/transport`,
+over web and tcp, under lab and under node:test:
 
 ```sh
 npm install
@@ -125,35 +125,26 @@ npm test
 
 `npm run test-lab` and `npm run test-node` run one runner each, and
 `npm run coverage` writes a lab coverage report to `coverage.html`.
-Use Node.js 24 (Node.js 22 is also tested). The devDependency is the
-Seneca 4 prerelease, `seneca@^4.0.0-rc5`; `.npmrc` sets
-`legacy-peer-deps` while published plugins exclude the prerelease from
-their peer range. To test against another Seneca build, run
+Use Node.js 24 or later. The development dependencies are
+`seneca@^4.0.0` and `@seneca/transport@^9.0.0`. To test against
+another Seneca build, run
 `npm install --no-save <tarball, or seneca@version>` and `npm test`,
 then `npm install` to restore the devDependency.
-
-With seneca-transport 8.3.0 (the published version) some tcp cases
-cannot pass on Seneca 4: both on 4.0.0-rc5, the basic case on 4.0.0.
-The tests skip them and give the reason in the report; all cases run
-with Seneca 3, and with seneca-transport 8.4.0. See
-[Seneca 3 and Seneca 4](docs/explanation/seneca-3-and-4.md#seneca-transport-on-each-version).
 
 CI: the GitHub Actions workflow is provided as a patch in
 [.patches](.patches/README.md); apply it with `git am .patches/*.patch`.
 
 ## Background
 
-The cases date from 2014 and are shared by Seneca transport plugins;
-the tests of [seneca-transport](https://github.com/senecajs/seneca-transport)
-depend on `seneca-transport-test@^1.0.0`. Version 1.0.0 was published
-as `seneca-transport-test`; from the next version the package is
-`@seneca/transport-test`. Version 1.1.0 adds Seneca 4 and node:test
-support, and tests the transport with separate service and client
-instances.
+The cases date from 2014 and are shared by Seneca transport plugins.
+Version 1.0.0 was published as `seneca-transport-test`; from version
+2.0.0 the package is `@seneca/transport-test`. Version 2.0.0 is for
+Seneca 4, adds node:test support, and tests the transport with separate
+service and client instances.
 
 | Version | Seneca | Node.js | Test runners |
 | ------- | ------ | ------- | ------------ |
-| 1.1.0 | 3.x (tested: 3.38), 4.0.0-rc5, 4.0.0 | tested on 24 and 22 | lab 26, node:test, or any script with `describe`, `it`, `before` and `after` |
+| 2.0.0 | 4.x (tested: 4.0.0) | 24 or later (tested on 26) | lab 26, node:test, or any script with `describe`, `it`, `before` and `after` |
 | 1.0.0 | 3.x | 8, 10, 11 (Travis CI) | lab |
 
 Changes: [CHANGES.md](CHANGES.md). License: [MIT][].

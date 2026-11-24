@@ -2,7 +2,7 @@
 'use strict'
 
 // The repository's own test, under lab: every exported case runs against
-// seneca-transport over web and tcp. Run with: npm test
+// @seneca/transport over web and tcp. Run with: npm test
 
 const Lab = require('@hapi/lab')
 
@@ -16,14 +16,6 @@ const lab = (exports.lab = Lab.script())
 Shared.basictest({ seneca: Support.make, script: lab, type: 'web', port: 10601 })
 Shared.basicpintest({ seneca: Support.make, script: lab, type: 'web', port: 10611 })
 
-// tcp: a case the installed seneca-transport cannot pass on the installed
-// seneca is reported as skipped, with the reason (see test/support.js)
-for (const [name, port] of [['basictest', 10701], ['basicpintest', 10711]]) {
-  const reason = Support.tcp_skip(name)
-
-  if (reason) {
-    lab.it(name + ' over tcp skipped: ' + reason, { skip: true }, () => {})
-  } else {
-    Shared[name]({ seneca: Support.make, script: lab, type: 'tcp', port })
-  }
-}
+// tcp
+Shared.basictest({ seneca: Support.make, script: lab, type: 'tcp', port: 10701 })
+Shared.basicpintest({ seneca: Support.make, script: lab, type: 'tcp', port: 10711 })

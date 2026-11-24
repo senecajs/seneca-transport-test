@@ -38,7 +38,7 @@ The programs are in [examples](examples/).
 | ----------- | ----- |
 | [Why a conformance suite](explanation/why-a-conformance-suite.md) | What the cases check and do not check; why the caller provides the instances, why two instances, why one process. |
 | [What a transport must provide](explanation/what-a-transport-must-provide.md) | The two hook actions, carrying messages and replies, several listeners, fire-and-forget, close hooks. |
-| [Seneca 3 and Seneca 4](explanation/seneca-3-and-4.md) | Differences that affect transports and their tests; how seneca-transport fares on each version. |
+| [Seneca 3 and Seneca 4](explanation/seneca-3-and-4.md) | Differences that affect transports and their tests; how seneca-transport 8 and @seneca/transport 9 fare on each version. |
 
 ## Feature index
 

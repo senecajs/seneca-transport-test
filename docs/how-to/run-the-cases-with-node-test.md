@@ -77,13 +77,12 @@ Fix it in the transport: release the resources in a close action, and
 on Seneca 4 register that action on `sys:seneca,cmd:close` (see
 [Seneca 3 and Seneca 4](../explanation/seneca-3-and-4.md#closing)).
 
-seneca-transport 8.3.0 on seneca 4.0.0-rc5 has this problem: its close
-actions are registered on `role:seneca,cmd:close`, which rc5 never
-calls. Until you can use a fixed version, let node:test end the process
-once the tests are done:
+Until the transport is fixed, let node:test end the process once the
+tests are done:
 
 ```sh
 node --test --test-force-exit test/
 ```
 
-This repository's own `npm test` does so for that reason.
+This repository's own tests, with @seneca/transport 9.0.0 on seneca
+4.0.0, exit without it.

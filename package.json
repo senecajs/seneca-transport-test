@@ -1,19 +1,17 @@
 {
   "name": "@seneca/transport-test",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Standard test cases for Seneca transports.",
   "main": "transport-test.js",
   "scripts": {
-    "test": "lab -v test/lab.test.js && node --test --test-force-exit test/node.test.js",
+    "test": "lab -v test/lab.test.js && node --test test/node.test.js",
     "test-lab": "lab -v test/lab.test.js",
-    "test-node": "node --test --test-force-exit test/node.test.js",
-    "coverage": "lab -c -r console -o stdout -r html -o coverage.html test/lab.test.js",
-    "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
-    "repo-publish": "npm run repo-tag && npm publish --access public --registry http://registry.npmjs.org"
+    "test-node": "node --test test/node.test.js",
+    "coverage": "lab -c -r console -o stdout -r html -o coverage.html test/lab.test.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/senecajs/seneca-transport-test.git"
+    "url": "git+https://github.com/senecajs/seneca-transport-test.git"
   },
   "keywords": [
     "seneca",
@@ -29,10 +27,13 @@
     "url": "https://github.com/senecajs/seneca-transport-test/issues"
   },
   "homepage": "https://github.com/senecajs/seneca-transport-test",
+  "peerDependencies": {
+    "seneca": "^4.0.0"
+  },
   "devDependencies": {
     "@hapi/lab": "^26.0.1",
-    "seneca": "^4.0.0-rc5",
-    "seneca-transport": "^8.3.0"
+    "@seneca/transport": "^9.0.0",
+    "seneca": "^4.0.0"
   },
   "files": [
     "LICENSE",
@@ -40,5 +41,11 @@
     "CHANGES.md",
     "transport-test.js",
     "docs"
-  ]
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

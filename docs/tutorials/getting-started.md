@@ -6,20 +6,21 @@ that moves messages between two Seneca instances in the same process;
 in your project, your own transport takes its place. At the end you know
 what the cases do, what they assert, and how to read their output.
 
-You need Node.js 22 or later, Seneca 4, and about ten minutes.
+You need Node.js 24 or later, Seneca 4, and about ten minutes.
 
 ## 1. Install
 
 In your transport plugin's project:
 
 ```sh
-npm install --save-dev @seneca/transport-test seneca
+npm install --save-dev seneca@^4 @seneca/transport-test
 ```
 
 (The package name is explained in the [README](../../README.md#install).)
 The cases receive Seneca instances from your test, so the package does
-not depend on `seneca` itself; the devDependency on `seneca` is yours.
-This tutorial was run with the Seneca 4 prerelease, `seneca@4.0.0-rc5`.
+not load `seneca` itself: it declares `seneca` `^4.0.0` as a peer
+dependency, and the devDependency on `seneca` is yours. This tutorial
+was run with `seneca@4.0.0`.
 
 ## 2. The transport under test
 
@@ -153,15 +154,15 @@ Three things to note:
 node --test docs/examples/memory-transport-node.test.js
 ```
 
-Output (Node.js 24, seneca 4.0.0-rc5):
+Output (Node.js 26, seneca 4.0.0):
 
 ```
 ▶ Basic Transport for type memory
-  ✔ should execute three consecutive calls (473.593399ms)
-✔ Basic Transport for type memory (744.254075ms)
+  ✔ should execute three consecutive calls (512.657989ms)
+✔ Basic Transport for type memory (812.805317ms)
 ▶ Basic Transport using pin for type memory
-  ✔ should execute two consecutive calls using pin (253.20377ms)
-✔ Basic Transport using pin for type memory (506.227334ms)
+  ✔ should execute two consecutive calls using pin (260.857267ms)
+✔ Basic Transport using pin for type memory (520.32641ms)
 ℹ tests 2
 ℹ suites 2
 ℹ pass 2
@@ -169,7 +170,7 @@ Output (Node.js 24, seneca 4.0.0-rc5):
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 1415.183129
+ℹ duration_ms 1536.963527
 ```
 
 Running the file with plain `node` gives the same report: node:test
@@ -237,5 +238,5 @@ the failures and what to look at for each.
 * Read what the cases require from a transport and why:
   [What a transport must provide](../explanation/what-a-transport-must-provide.md),
   [Why a conformance suite](../explanation/why-a-conformance-suite.md).
-* Support Seneca 3 and Seneca 4 in one transport:
+* Move a transport from Seneca 3 to Seneca 4:
   [Seneca 3 and Seneca 4](../explanation/seneca-3-and-4.md).

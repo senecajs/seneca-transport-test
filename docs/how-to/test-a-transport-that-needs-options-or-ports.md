@@ -51,7 +51,7 @@ TransportTest.basicpintest({ seneca: make, script, type: 'mytype', port: 10211 }
 
 A port that is in use shows as `EADDRINUSE` and
 `=== SENECA FATAL ERROR ===` in the log (with a transport that binds
-ports, such as seneca-transport), and the case then fails with an
+ports, such as @seneca/transport), and the case then fails with an
 unrelated error.
 
 Without `port` (or with `0`), the first listener gets no `port` key and
@@ -99,19 +99,11 @@ followed by `=== SENECA FATAL ERROR ===`, and the case times out.
 ## Expect configuration keys from core
 
 Seneca core adds keys to every listen and client configuration before
-your hooks see it, whatever the type:
-
-| Seneca | Keys added |
-| ------ | ---------- |
-| 3.x, 4.0.0 | `port: 10101` when no port is given |
-| 4.0.0-rc5 | `port: 10101` when no port is given, and `host: '127.0.0.1'`, `path: '/act'`, `protocol: 'http'` |
+your hooks see it, whatever the type: `port: 10101` when no port is
+given (`options.transport.port`).
 
 Client configurations also carry `id` and `pg` (the pins in canonical
 string form), and `pin` as the caller gave it, a string or an object.
-A transport that gives `path` a meaning of its own (a UNIX socket path,
-for example) must not mistake the web path `/act` for it on rc5:
-seneca-transport 8.3.0 does exactly that, and its tcp listeners do not
-bind on rc5.
 
 ## Give a slow transport more time
 

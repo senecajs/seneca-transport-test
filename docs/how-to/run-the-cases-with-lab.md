@@ -33,17 +33,17 @@ npx lab -v test/standard.test.js
 
 A complete example is in
 [examples/memory-transport-lab.test.js](../examples/memory-transport-lab.test.js).
-Its output (Node.js 24, seneca 4.0.0-rc5):
+Its output (Node.js 26, seneca 4.0.0):
 
 ```
 Basic Transport for type memory
-  ✔ 1) should execute three consecutive calls (478 ms)
+  ✔ 1) should execute three consecutive calls (514 ms)
 Basic Transport using pin for type memory
-  ✔ 2) should execute two consecutive calls using pin (259 ms)
+  ✔ 2) should execute two consecutive calls using pin (265 ms)
 
 
 2 tests complete
-Test duration: 1266 ms
+Test duration: 1350 ms
 Leaks: No issues
 ```
 
@@ -76,6 +76,6 @@ Lab stops a case after 2000 ms by default. The test functions pass
 their own limit, `settings.timeout` (default 5555 ms), to each case, and
 a case over the limit fails with `Timed out (5555ms) - <case name>`.
 
-Lab's global leak detection reported no issues with seneca 4 and
-seneca-transport on Node.js 24. If it reports leaked globals created by
+Lab's global leak detection reported no issues with seneca 4.0.0 and
+@seneca/transport 9.0.0 on Node.js 26. If it reports leaked globals created by
 your transport or its dependencies, add `-l` to turn the check off.
